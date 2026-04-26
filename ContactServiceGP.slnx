@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ContactService.DTO/ContactService.DTO.csproj" Id="0db596c4-442e-4f88-a1e3-d6cbbbc4cf09" />
+  <Project Path="ContactServiceGP.Application/ContactServiceGP.Application.csproj" />
+  <Project Path="ContactServiceGP.Domain/ContactServiceGP.Domain.csproj" />
+  <Project Path="ContactServiceGP.Infrastructure/ContactServiceGP.Infrastructure.csproj" />
+  <Project Path="ContactServiceGP.Presentation/ContactServiceGP.Presentation.csproj" />
+</Solution>
