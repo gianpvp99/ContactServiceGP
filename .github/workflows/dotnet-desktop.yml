@@ -1,0 +1,74 @@
+name: 🚀 Build and Deploy ContactServiceGP API
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🟣 Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 📥 Restore dependencies
+        run: dotnet restore ContactServiceGP.slnx
+
+      - name: 🧪 Build project
+        run: dotnet build ContactServiceGP.slnx -c Release --no-restore
+
+      - name: 🛠️ Publish API
+        run: dotnet publish ContactServiceGP.Presentation/ContactServiceGP.Presentation.csproj -c Release -o publish --no-build
+
+      - name: 📦 Compress publish
+        run: tar -czf contact-service-api.tar.gz -C publish .
+
+      - name: 🧹 Prepare server folder
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 2222
+          script: |
+            mkdir -p /var/www/contact-service-api
+            mkdir -p /var/www/contact-service-api-temp
+
+      - name: 🚚 Upload artifact to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 2222
+          source: "contact-service-api.tar.gz"
+          target: "/var/www/contact-service-api-temp"
+
+      - name: 🔄 Deploy and restart service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 2222
+          script: |
+            systemctl stop contactservicegp
+
+            rm -rf /var/www/contact-service-api/*
+            tar -xzf /var/www/contact-service-api-temp/contact-service-api.tar.gz -C /var/www/contact-service-api
+
+            chown -R www-data:www-data /var/www/contact-service-api
+            chmod -R 755 /var/www/contact-service-api
+
+            rm -rf /var/www/contact-service-api-temp/*
+
+            systemctl daemon-reload
+            systemctl start contactservicegp
+            systemctl status contactservicegp --no-pager
