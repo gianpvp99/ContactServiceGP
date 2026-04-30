@@ -59,7 +59,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 2222
           script: |
-            systemctl stop contactservicegp
+            sudo systemctl stop contactservicegp
 
             rm -rf /var/www/contact-service-api/*
             tar -xzf /var/www/contact-service-api-temp/contact-service-api.tar.gz -C /var/www/contact-service-api
@@ -69,6 +69,6 @@ jobs:
 
             rm -rf /var/www/contact-service-api-temp/*
 
-            systemctl daemon-reload
-            systemctl start contactservicegp
-            systemctl status contactservicegp --no-pager
+            sudo systemctl daemon-reload
+            sudo systemctl start contactservicegp
+            sudo systemctl status contactservicegp --no-pager
