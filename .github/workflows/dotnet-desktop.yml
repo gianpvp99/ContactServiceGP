@@ -63,10 +63,7 @@ jobs:
 
             rm -rf /var/www/contact-service-api/*
             tar -xzf /var/www/contact-service-api-temp/contact-service-api.tar.gz -C /var/www/contact-service-api
-
-            chown -R www-data:www-data /var/www/contact-service-api
             chmod -R 755 /var/www/contact-service-api
-
             rm -rf /var/www/contact-service-api-temp/*
 
             sudo systemctl daemon-reload
