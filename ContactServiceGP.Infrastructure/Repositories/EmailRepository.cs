@@ -17,17 +17,10 @@ namespace ContactServiceGP.Infrastructure.Repositories
         }
         public async Task<bool> SendEmailAsync(SendEmailReq request)
         {
-            try
-            {
-                await _dbContext.Database.ExecuteSqlInterpolatedAsync(
+            await _dbContext.Database.ExecuteSqlInterpolatedAsync(
                     $"EXEC dbo.SP_SendEmail @fullname = {request.fullname}, @email = {request.email}, @phone = {request.phone}, @message = {request.message}, @ip_public = {request.ip_public}, @browser_type = {request.browser_type}");
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }catch(Exception ex)
-            {
-                throw ex;
-            }
-            
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
     }
 }

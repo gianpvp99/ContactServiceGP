@@ -7,10 +7,10 @@ namespace ContactServiceGP.Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class Email: ControllerBase
+    public class Contact: ControllerBase
     {
         private readonly IMediator _mediator;
-        public Email(IMediator mediator)
+        public Contact(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -22,7 +22,7 @@ namespace ContactServiceGP.Presentation.Controllers
             try
             {
                 var response = await _mediator.Send(
-                    new SendEmailCommand { fullname = request.fullname, email = request.email, message = request.message, phone = request.phone});
+                    new SendEmailCommand { fullname = request.fullname, email = request.email, message = request.message, phone = request.phone, ip_public = request.ip_public, browser_type = request.ip_public});
                 return Ok(response);
             }
             catch (Exception ex)
