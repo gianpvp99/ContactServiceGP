@@ -2,11 +2,13 @@
 using ContactServiceGP.Application.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ContactServiceGP.Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableRateLimiting("LimitedRate")]
     public class Contact: ControllerBase
     {
         private readonly IMediator _mediator;

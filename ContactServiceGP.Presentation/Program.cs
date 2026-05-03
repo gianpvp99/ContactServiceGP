@@ -6,6 +6,7 @@ using ContactServiceGP.Infrastructure.Data;
 using ContactServiceGP.Infrastructure.Repositories;
 using ContactServiceGP.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -53,19 +54,30 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("LimitedRate", opt =>
+    {
+        opt.PermitLimit = 3;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueLimit = 0;
+    });
+});
+
 // Solo usa Swagger (compatible con .NET 8)
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+if (app.Environment.IsDevelopment()) //|| app.Environment.IsProduction()
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseCors("AllowSpecificOrigins");
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 
